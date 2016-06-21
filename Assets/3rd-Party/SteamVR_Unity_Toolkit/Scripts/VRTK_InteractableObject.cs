@@ -35,7 +35,7 @@ public class VRTK_InteractableObject : MonoBehaviour
         Fixed_Joint,
         Spring_Joint,
         Track_Object,
-        Child_Of_Controller,  
+        Child_Of_Controller
     }
 
     [Header("Touch Interactions", order = 1)]

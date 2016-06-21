@@ -39,9 +39,6 @@ public class VRTK_InteractGrab : MonoBehaviour
 
     private Vector3 controllerRigidBodyPosition = new Vector3(0f, -0.04f, 0f);
     private Transform lastParentController;
-    private bool lastIsKisematic;
-    private bool lastDetectCollisons;
-    private bool lastUseGravity;
 
     public virtual void OnControllerGrabInteractableObject(ObjectInteractEventArgs e)
     {
@@ -168,8 +165,7 @@ public class VRTK_InteractGrab : MonoBehaviour
         if (obj.GetComponent<VRTK_InteractableObject>().grabAttachMechanic == VRTK_InteractableObject.GrabAttachType.Child_Of_Controller)
         {
             SetControllerAsParent(obj);
-        }
-        else
+        } else
         {
             CreateJoint(obj);
         }
@@ -177,16 +173,12 @@ public class VRTK_InteractGrab : MonoBehaviour
 
     private void SetControllerAsParent(GameObject obj)
     {
-        //lastParentController = gameObject.transform.parent;
         obj.transform.parent = this.transform;
-        var rb = obj.GetComponent<Rigidbody>();
-        if (rb)
+        if (obj.GetComponent<Rigidbody>())
         {
-            lastIsKisematic = rb.isKinematic;
-            rb.isKinematic = true;
+            obj.GetComponent<Rigidbody>().isKinematic = true;
         }
     }
-
 
     private void CreateJoint(GameObject obj)
     {
@@ -194,7 +186,7 @@ public class VRTK_InteractGrab : MonoBehaviour
         {
             controllerAttachJoint = obj.AddComponent<FixedJoint>();
         }
-        else
+        else if (obj.GetComponent<VRTK_InteractableObject>().grabAttachMechanic == VRTK_InteractableObject.GrabAttachType.Spring_Joint)
         {
             SpringJoint tempSpringJoint = obj.AddComponent<SpringJoint>();
             tempSpringJoint.spring = obj.GetComponent<VRTK_InteractableObject>().springJointStrength;
@@ -237,12 +229,9 @@ public class VRTK_InteractGrab : MonoBehaviour
     {
         var rigidbody = grabbedObject.GetComponent<Rigidbody>();
         grabbedObject.transform.parent = lastParentController;
-        rigidbody.isKinematic = lastIsKisematic;
-        rigidbody.useGravity = lastUseGravity;
-        rigidbody.detectCollisions = lastDetectCollisons;
+        rigidbody.isKinematic = false;
         return rigidbody;
     }
-
 
     private void ThrowReleasedObject(Rigidbody rb, uint controllerIndex)
     {
